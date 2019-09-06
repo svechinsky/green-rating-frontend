@@ -17,10 +17,18 @@ class ActionBar extends React.Component {
     showLayer: false,
     layerSubmit: null,
     layerInput: null,
-    layerOnClick: null
+    layerOnClick: null,
+    inputVal: ""
   };
   render() {
-    const { showLayer, layerSubmit, layerInput, layerOnClick } = this.state;
+    const { signEntity, addEntity } = this.props;
+    const {
+      showLayer,
+      layerSubmit,
+      layerInput,
+      layerOnClick,
+      inputVal
+    } = this.state;
     return (
       <>
         <Box
@@ -38,7 +46,7 @@ class ActionBar extends React.Component {
                 showLayer: true,
                 layerSubmit: "Add dealer",
                 layerInput: "Dealer info",
-                layerOnClick: console.log
+                layerOnClick: addEntity
               })
             }
             color="brand"
@@ -53,7 +61,7 @@ class ActionBar extends React.Component {
                 showLayer: true,
                 layerSubmit: "Approve dealer",
                 layerInput: "Dealer info",
-                layerOnClick: console.log
+                layerOnClick: signEntity
               })
             }
           />
@@ -71,13 +79,23 @@ class ActionBar extends React.Component {
               })
             }
           />
+          
         </Box>
         {showLayer ? (
           <Layer onClickOutside={() => this.setState({ showLayer: false })}>
             <Box gap="small" pad="medium" width="medium">
               <Text> {layerInput}:</Text>
-              <TextInput />
-              <Button label={layerSubmit} />
+              <TextInput
+                value={inputVal}
+                onChange={e => this.setState({ inputVal: e.target.value })}
+              />
+              <Button
+                label={layerSubmit}
+                onClick={() => {
+                  this.setState({ showLayer: false });
+                  layerOnClick(inputVal);
+                }}
+              />
             </Box>
           </Layer>
         ) : null}

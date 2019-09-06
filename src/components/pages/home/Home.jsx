@@ -32,7 +32,7 @@ const ShopLink = ({ shopId }) => {
   return <Text>{shopId}</Text>;
 };
 
-const ApprovedDealer = ({ dealer, idx }) => (
+const ApprovedDealer = ({ dealer, idx, onClick }) => (
   <Box
     height="xsmall"
     direction="row"
@@ -40,6 +40,7 @@ const ApprovedDealer = ({ dealer, idx }) => (
     pad="medium"
     justify="between"
     background={idx % 2 == 0 ? "white" : "whitesmoke"}
+    onClick={onClick}
   >
     <Box>
       <Text>
@@ -51,12 +52,12 @@ const ApprovedDealer = ({ dealer, idx }) => (
     </Box>
     <Box align="center" direction="row" gap="small">
       <ShopLink shopId={dealer.shopId} />
-      <Button label="Blacklist dealer" icon={<Close/>} reverse />
+      <Button label="Blacklist dealer" icon={<Close />} reverse />
     </Box>
   </Box>
 );
 
-const Dealer = ({ dealer, idx, maxRank }) => (
+const Dealer = ({ dealer, idx, maxRank, onClick }) => (
   <Box
     height="xsmall"
     direction="row"
@@ -64,6 +65,7 @@ const Dealer = ({ dealer, idx, maxRank }) => (
     pad="medium"
     justify="between"
     background={idx % 2 == 0 ? "white" : "whitesmoke"}
+    onClick={onClick} 
   >
     <Box direction="row">
       <Box>
@@ -111,12 +113,13 @@ class Home extends React.Component {
     super(props);
   }
   state = {
-    maxRank: 3
+    maxRank: 3,
+    showDealer: null
   };
 
   render() {
-    const { user, entities, changeBaseUrl, baseUrl } = this.props;
-    const { maxRank } = this.state;
+    const { user, entities, changeBaseUrl, baseUrl, signEntity, addEntity } = this.props;
+    const { maxRank, showDealer } = this.state;
 
     // return <h1>No entities</h1>;
 
@@ -127,75 +130,116 @@ class Home extends React.Component {
 
     const friends = entities.filter(ent => ent.rank == 1);
     return (
-      <Container>
-        <Box
-          elevation="small"
-          direction="column"
-          pad={{ vertical: "small" }}
-          margin={{ top: "large" }}
-          background="white"
-        >
-          <Box pad={{ horizontal: "small" }}>
-            <UserBar user={user} baseUrl={baseUrl} changeBaseUrl={changeBaseUrl} />
-          </Box>
-          <Box pad={{ horizontal: "small" }}>
-            <ActionBar />
-          </Box>
-          <Box pad={{ horizontal: "small" }}>
-            <Box
-              gap="small"
-              border="bottom"
-              pad={{ vertical: "small" }}
-              direction="row"
-              align="center"
-            >
-              <Text>Secure</Text>
-              <RangeInput
-                max="5"
-                value={maxRank}
-                onChange={event =>
-                  this.setState({ maxRank: event.target.value })
-                }
+      <>
+        <Container>
+          <Box
+            elevation="small"
+            direction="column"
+            pad={{ vertical: "small" }}
+            margin={{ top: "large" }}
+            background="white"
+          >
+            <Box pad={{ horizontal: "small" }}>
+              <UserBar
+                user={user}
+                baseUrl={baseUrl}
+                changeBaseUrl={changeBaseUrl}
               />
-              <Text>Trusting</Text>
+            </Box>
+            <Box pad={{ horizontal: "small" }}>
+              <ActionBar signEntity={signEntity} addEntity={addEntity}/>
+            </Box>
+            <Box pad={{ horizontal: "small" }}>
+              <Box
+                gap="small"
+                border="bottom"
+                pad={{ vertical: "small" }}
+                direction="row"
+                align="center"
+              >
+                <Text>Secure</Text>
+                <RangeInput
+                  max="5"
+                  value={maxRank}
+                  onChange={event =>
+                    this.setState({ maxRank: event.target.value })
+                  }
+                />
+                <Text>Trusting</Text>
+              </Box>
+            </Box>
+            <Box width="100%" pad={{ vertical: "small" }} align="start">
+              <Tabs justify="start" alignSelf="start" width="100%">
+                <Tab title="Approved dealers" ak>
+                  <Box width="100%" pad={{ bottom: "medium" }}>
+                    {approvedDealers.map((dealer, idx) => (
+                      <ApprovedDealer
+                        onClick={() => this.setState({ showDealer: dealer })}
+                        key={dealer.pubkey}
+                        dealer={dealer}
+                        idx={idx}
+                      />
+                    ))}
+                  </Box>
+                </Tab>
+                <Tab title="All dealers" ak>
+                  <Box width="100%" pad={{ bottom: "medium" }}>
+                    {allDealers.map((dealer, idx) => (
+                      <Dealer
+                        onClick={() => this.setState({ showDealer: dealer })}
+                        key={dealer.pubkey}
+                        dealer={dealer}
+                        maxRank={maxRank}
+                        idx={idx}
+                      />
+                    ))}
+                  </Box>
+                </Tab>
+                <Tab title="Friends">
+                  <Box width="100%" pad={{ bottom: "medium" }}>
+                    {friends.map((friend, idx) => (
+                      <Friend key={friend.pubkey} friend={friend} idx={idx} />
+                    ))}
+                  </Box>
+                </Tab>
+              </Tabs>
             </Box>
           </Box>
-          <Box width="100%" pad={{ vertical: "small" }} align="start">
-            <Tabs justify="start" alignSelf="start" width="100%">
-              <Tab title="Approved dealers" ak>
-                <Box width="100%" pad={{ bottom: "medium" }}>
-                  {approvedDealers.map((dealer, idx) => (
-                    <ApprovedDealer
-                      key={dealer.pubkey}
-                      dealer={dealer}
-                      idx={idx}
-                    />
-                  ))}
-                </Box>
-              </Tab>
-              <Tab title="All dealers" ak>
-                <Box width="100%" pad={{ bottom: "medium" }}>
-                  {allDealers.map((dealer, idx) => (
-                    <Dealer
-                      key={dealer.pubkey}
-                      dealer={dealer}
-                      maxRank={maxRank}
-                      idx={idx}
-                    />
-                  ))}
-                </Box>
-              </Tab>
-              <Tab title="Friends">
-                <Box width="100%" pad={{ bottom: "medium" }}>
-                  {friends.map((friend, idx) => (
-                    <Friend key={friend.pubkey} friend={friend} idx={idx} />
-                  ))}
-                </Box>
-              </Tab>
-            </Tabs>
-          </Box>
-        </Box>
-      </Container>
+        </Container>
+        {showDealer ? (
+          <Layer onClickOutside={() => this.setState({ showDealer: null })}>
+            <Box
+              wrap
+              width="medium"
+              pad="medium"
+              style={{
+                wordWrap: "break-line",
+                overflowWrap: "break-word",
+                wordBreak: "break-all"
+              }}
+            >
+              <Text>
+                <b>Name</b> {showDealer.name}
+              </Text>
+              <Text>
+                <b>Location</b> {showDealer.location}
+              </Text>
+              <Text
+                style={{
+                  wordWrap: "break-line",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-all"
+                }}
+              >
+                <b>Pubkey</b> {showDealer.pubkey}
+              </Text>
+              <Text>
+                <b>Rank</b> {showDealer.rank}
+              </Text>
+            </Box>
+          </Layer>
+        ) : null}
+      </>
     );
   }
 }

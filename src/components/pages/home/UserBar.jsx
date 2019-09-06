@@ -5,7 +5,7 @@ import { Help, UserSettings, SettingsOption } from "grommet-icons";
 const UserBar = ({ user, baseUrl, changeBaseUrl }) => {
   const [showUserInfo, setShowUserInfo] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [peerDiscovery, setPeerDiscovery] = useState("GR://226.23.84.31:420");
+  const [peerDiscovery, setPeerDiscovery] = useState("gr://226.23.84.31:420");
   return (
     <React.Fragment>
       <Box

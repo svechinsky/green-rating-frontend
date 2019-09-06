@@ -46,10 +46,13 @@ export const removeNotification = () => ({
   type: REMOVE_NOTIFICATION
 });
 
-export const signEntity = entity => ({
-  type: SIGN_ENTITY,
-  payload: { entity }
-});
+export const signEntity = entity => {
+  console.log("ENN", entity)
+  return {
+    type: SIGN_ENTITY,
+    payload: { entity }
+  };
+};
 
 export const addEntity = entity => ({
   type: ADD_ENTITY,

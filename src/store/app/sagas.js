@@ -23,49 +23,49 @@ import {
 import { history } from "../../index";
 
 function* fetchApprovedEntities(api) {
-  const data = [
-    {
-      name: "Netanel",
-      pubkey: "0x000000000000sda0000feae0000",
-      rank: 1,
-      type: "friend",
-      location: "Tel Aviv",
-      shopId: null
-    },
-    {
-      name: "Shani",
-      pubkey: "0x00fada000000sda0000feae0000",
-      rank: 1,
-      type: "friend",
-      location: "Tel Aviv",
-      shopId: null
-    },
-    {
-      name: "Niv",
-      pubkey: "0x00efafe000000sda0000feae0000",
-      rank: 2,
-      type: "dealer",
-      location: "London",
-      shopId: "TGNiv"
-    },
-    {
-      name: "Nadav",
-      pubkey: "0x001234000000sda0000feae0000",
-      rank: 4,
-      type: "dealer",
-      location: "Tel Aviv",
-      shopId: "TGNadav"
-    },
-    {
-      name: "Udi",
-      pubkey: "0x0sd000000sda0000feae0000",
-      rank: 3,
-      type: "dealer",
-      location: "Tel Aviv",
-      shopId: "TGUdi"
-    }
-  ];
-  // const { data } = yield call(api.get, "/entities");
+  // const data = [
+  //   {
+  //     name: "Netanel",
+  //     pubkey: "0x000000000000sda0000feae0000",
+  //     rank: 1,
+  //     type: "friend",
+  //     location: "Tel Aviv",
+  //     shopId: null
+  //   },
+  //   {
+  //     name: "Shani",
+  //     pubkey: "0x00fada000000sda0000feae0000",
+  //     rank: 1,
+  //     type: "friend",
+  //     location: "Tel Aviv",
+  //     shopId: null
+  //   },
+  //   {
+  //     name: "Niv",
+  //     pubkey: "0x00efafe000000sda0000feae0000",
+  //     rank: 2,
+  //     type: "dealer",
+  //     location: "London",
+  //     shopId: "TGNiv"
+  //   },
+  //   {
+  //     name: "Nadav",
+  //     pubkey: "0x001234000000sda0000feae0000",
+  //     rank: 4,
+  //     type: "dealer",
+  //     location: "Tel Aviv",
+  //     shopId: "TGNadav"
+  //   },
+  //   {
+  //     name: "Udi",
+  //     pubkey: "0x0sd000000sda0000feae0000",
+  //     rank: 3,
+  //     type: "dealer",
+  //     location: "Tel Aviv",
+  //     shopId: "TGUdi"
+  //   }
+  // ];
+  const { data } = yield call(api.get, "/entities");
   yield put(setApprovedEntities(data));
 }
 
@@ -74,13 +74,21 @@ function* fetchData(api) {
 }
 
 function* addEntity(api, { payload: { entity } }) {
-  const { data } = yield call(api.post, "/add-entity", entity);
-  yield put(setApprovedEntities(data));
+  try {
+    const { data } = yield call(api.post, "/add-entity", JSON.parse(entity));
+    yield put(setApprovedEntities(data));
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 function* signEntity(api, { payload: { entity } }) {
-  const { data } = yield call(api.post, "/sign-entity", entity);
-  yield put(setSignedEntity(data));
+  try {
+    const { data } = yield call(api.post, "/sign-entity", JSON.parse(entity));
+    yield put(setSignedEntity(data));
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 function* getUser(api) {
