@@ -10,7 +10,7 @@
     "lint": "eslint 'src/**/*.js'"
   },
   "dependencies": {
-    "axios": "0.18.0",
+    "axios": "0.21.1",
     "connected-react-router": "4.5.0",
     "grommet": "^2.5.5",
     "grommet-icons": "^4.2.0",
